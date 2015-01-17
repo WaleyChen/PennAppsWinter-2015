@@ -1,0 +1,1 @@
+2015/01/17 05:37:14.0512: [18381]:    DEBUG:      cluster: Client initialized in direct mode.
