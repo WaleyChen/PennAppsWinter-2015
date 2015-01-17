@@ -1,0 +1,8 @@
+#ifdef __cplusplus
+#include <opencv2/opencv.hpp>
+#endif
+#ifdef __OBJC__
+#import <UIKit/UIKit.h>
+#endif
+
+#import "Pods-environment.h"
