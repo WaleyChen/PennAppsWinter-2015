@@ -9,19 +9,20 @@ void num2str(char *str, int length, int num) {
 }
 
 int main(int argc, char *argv[]) {
-    char *path = "sequences/cokecan/img";
+    char *path = "ball/";
     char *ext = "png";
-    int numLength = 5;
+    int numLength = 8;
     char numString[numLength+1];
     char filename[255];
-    int start = 0;
-    int end = 291;
-    cv::Point2f initTopLeft(150,82);
-    cv::Point2f initBottomDown(170,118);
+    int start = 1;
+    int end = 603;
+    cv::Point2f initTopLeft(195,110);
+    cv::Point2f initBottomDown(254,169);
 
     ArbitraryTracking cmt;
     for(int i = start; i <= end; i++) {
         num2str(numString, numLength+1, i);
+		printf("%s",numString);
         sprintf(filename, "%s%s.%s", path, numString, ext);
 
         #ifdef DEBUG_MODE
