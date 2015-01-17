@@ -8,15 +8,10 @@
         <scene sceneID="SXt-UF-lvB">
             <objects>
                 <viewController id="5OI-Gs-qSG" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="5y6-Tr-JrR"/>
-                        <viewControllerLayoutGuide type="bottom" id="AZF-ew-XUA"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="jYf-aV-mjo">
+                    <imageView key="view" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Home.png" id="NID-yG-IWD">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </imageView>
                     <navigationItem key="navigationItem" id="CAJ-3o-DkR"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="DoF-Ot-AAC" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -117,4 +112,8 @@
             <point key="canvasLocation" x="285" y="-336"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Home.png" width="1242" height="2208"/>
+    </resources>
+    <color key="tintColor" red="0.69032405782834338" green="1" blue="0.99373648994664898" alpha="1" colorSpace="calibratedRGB"/>
 </document>

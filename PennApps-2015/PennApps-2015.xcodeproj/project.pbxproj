@@ -27,6 +27,7 @@
 		27DC24351A6A1CD400D864B4 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27DC24341A6A1CD400D864B4 /* CoreMedia.framework */; };
 		27DC24371A6A1CDA00D864B4 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27DC24361A6A1CDA00D864B4 /* CoreVideo.framework */; };
 		27DC24391A6A1CDF00D864B4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27DC24381A6A1CDF00D864B4 /* QuartzCore.framework */; };
+		D967721C1A6A348A00412792 /* Home.png in Resources */ = {isa = PBXBuildFile; fileRef = D967721B1A6A348A00412792 /* Home.png */; };
 		E491752E46624CF7E4A21A10 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 733D356DB1D4F3D24CA57F0A /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		298105CA9887D70425902968 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		733D356DB1D4F3D24CA57F0A /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A8038EAF5AA63F49CCA014B /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		D967721B1A6A348A00412792 /* Home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Home.png; path = "PennApps-2015/Home.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				27DC24231A6A038D00D864B4 /* Default.png */,
+				D967721B1A6A348A00412792 /* Home.png */,
 				27DC241D1A69FE9100D864B4 /* Video Source */,
 				27C03CBD1A69F4DC0089B106 /* PennApps-2015 */,
 				27C03CDA1A69F4DC0089B106 /* PennApps-2015Tests */,
@@ -292,6 +295,7 @@
 			files = (
 				27DC24241A6A038D00D864B4 /* Default.png in Resources */,
 				27C03CCD1A69F4DC0089B106 /* Main.storyboard in Resources */,
+				D967721C1A6A348A00412792 /* Home.png in Resources */,
 				27C03CD21A69F4DC0089B106 /* LaunchScreen.xib in Resources */,
 				27C03CCF1A69F4DC0089B106 /* Images.xcassets in Resources */,
 			);
