@@ -53,11 +53,6 @@ int main(int argc, char** argv)
   client = mongoc_client_new ("mongodb://localhost:27017/");
   collection = mongoc_client_get_collection (client, "Curiousity", "Companies");
 
-  char *try = malloc(255);
-  memcpy(try, "AEP Industries Inc.",20);
-  try[20] = '\0';
-  mongo_upload(try);
-
   //CSV File stuff
   if (argc < 4) return 1;
   FILE* csv = fopen(argv[2], "r"); 
