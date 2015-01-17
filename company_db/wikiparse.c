@@ -88,13 +88,24 @@ int main(int argc, char** argv)
   linkend = strstr(linkptr, "</table>");
   if (linkend == NULL) {printf("ERROR 2\n"); return 1;}
 
-
-
   char newbuff[10000];
   memcpy(newbuff, linkptr, (int)(linkend-linkptr));
   strcat(newbuff, "</table>");
+  
+  //Fixing images
+  char newnewbuff[10000];
+  char* linkimg = strstr(newbuff, "src=\"");
+  
+  char* beginning = malloc(500);
+  memcpy(beginning, newbuff, (int)(linkimg-newbuff)+5);
+
+  strcpy(newnewbuff, beginning);
+  strcat(newnewbuff, "http:");
+  strcat(newnewbuff, linkimg+5);
+
+  //printf("%s\n", newnewbuff);
   FILE* output = fopen("out.html", "w");
-  fprintf(output, "%s", newbuff);
+  fprintf(output, "%s", newnewbuff);
   fclose(output);
   strcpy(buff, "wkhtmltoimage out.html out.jpg");
   system(buff);
