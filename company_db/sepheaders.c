@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <curl/curl.h>
 #include <mongoc.h>
 #include <bson.h>
 
@@ -24,6 +25,12 @@ char** parse_wiki(FILE* html);
  */
 char** parse_csv(FILE* csv);
 
+void mongo_upload(char* name);
+
+char* get_address(char* name);
+
+char* clean(char* name);
+
 struct MemoryStruct {
     char *memory;
     size_t size;
@@ -39,20 +46,23 @@ char alpha[26] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 int main(int argc, char** argv)
 {
+  /**
+   * MongoDB
+   */  
   mongoc_init();
   client = mongoc_client_new ("mongodb://localhost:27017/");
   collection = mongoc_client_get_collection (client, "Curiousity", "Companies");
-  
-  //CSV File stuff
-  if (argc < 3) return 1;
-  FILE* csv = fopen(argv[1], "r"); 
-  FILE* html = fopen(argv[2], "r");
 
-  parse_wiki(html);
+  //CSV File stuff
+  if (argc < 4) return 1;
+  FILE* csv = fopen(argv[2], "r"); 
+  FILE* html = fopen(argv[3], "r");
 
   //Process and generate from NASDAQ csv
   parse_csv(csv);
   
+  parse_wiki(html);
+
 
   mongoc_collection_destroy (collection);
   mongoc_client_destroy (client);
@@ -107,19 +117,7 @@ char** parse_wiki(FILE* html) {
                 currentAlpha = (int)(*tmp);
                 if (pastAlpha == 90 && currentAlpha < 90) break;
                 //THIS IS WHERE I UPLOAD TO MONGO
-                bson_t *doc;
-                bson_oid_t oid;
-                doc = bson_new ();
-                bson_oid_init (&oid, NULL);
-                BSON_APPEND_OID (doc, "_id", &oid);
-                BSON_APPEND_UTF8 (doc, "Name", tmp);
-
-       
-                if (!mongoc_collection_insert (collection, MONGOC_INSERT_NONE, doc, NULL, &error)) {
-                    printf ("Oh no %s\n", error.message);
-                }
-  
-                bson_destroy (doc);
+                mongo_upload(tmp);
             }
         }
 
@@ -132,7 +130,6 @@ char** parse_wiki(FILE* html) {
 
 char** parse_csv(FILE* csv) {
     char* tmp = malloc(sizeof(char)*1000);
-    char* tmp2 = malloc(sizeof(char)*75);
     size_t len = 0;
     int num = 0;
     while (getline(&tmp, &len, csv) != -1) {
@@ -141,20 +138,8 @@ char** parse_csv(FILE* csv) {
         int count = 0;
         while (tok != NULL && count < 3) {
             //UPLOAD TO MONGO HERE
-            if (count == 2 && num > 0) {
-                bson_t *doc;
-                bson_oid_t oid;
-                doc = bson_new ();
-                bson_oid_init (&oid, NULL);
-                BSON_APPEND_OID (doc, "_id", &oid);
-                BSON_APPEND_UTF8 (doc, "Name", tok);
-
-                if (!mongoc_collection_insert (collection, MONGOC_INSERT_NONE, doc, NULL, &error)) {
-                    printf ("Oh no %s\n", error.message);
-                }
-  
-                bson_destroy (doc);
-            }
+            
+            if (count == 2 && num > 0) mongo_upload(tok);
 
             tok = strtok(NULL, "\"");
             count++;
@@ -165,4 +150,63 @@ char** parse_csv(FILE* csv) {
     fclose(csv);
 
     return NULL;
+}
+
+void mongo_upload(char* name) {
+    bson_t *doc;
+    bson_oid_t oid;
+    doc = bson_new ();
+    bson_oid_init (&oid, NULL);
+    BSON_APPEND_OID (doc, "_id", &oid);
+    BSON_APPEND_UTF8 (doc, "Name", name);
+    char* n = get_address(clean(name));
+    if (n == NULL) return;
+    BSON_APPEND_UTF8 (doc, "Logo", n);
+
+    
+    if (!mongoc_collection_insert (collection, MONGOC_INSERT_NONE, doc, NULL, &error)) {
+        printf ("Oh no %s\n", error.message);
+    }
+  
+    bson_destroy (doc);
+}
+
+char* get_address(char* name) {
+    char buff[200];
+    strcpy(buff, "./webparse ");
+    strcat(buff, name);
+    strcat(buff, "+logo");
+    
+    printf("QUERY: %s\n", buff);
+ 
+    FILE* file = popen(buff, "r");
+    char* body = malloc(100000);
+    fread(body, 1, 100000, file);
+    fclose(file);
+     
+    char* pos = strstr(body, "src=\"https://encrypted-tbn0.gstatic.com/images?q=");
+    if (pos == NULL) return NULL;
+    char* pos2 = strstr(pos, "\" ");
+    if (pos2 == NULL) return NULL;
+    char* three = malloc(2000);
+    memcpy(three, pos+5, (int)(pos2-pos)-5);
+   
+    return three; 
+}
+
+char* clean(char* name) {
+    //char* retur = malloc(255);
+    char* mvr = name;
+    int count = 0;
+
+    while (*mvr != '\0') {
+        if (*mvr == '(' || *mvr == ')' || *mvr == '\'' || *mvr == '&') {
+            *mvr = ' ';
+            //retur[count] = *name;
+            count++;
+        }
+        mvr++;
+    }
+    //retur[count] = '\0';
+    return name;
 }
