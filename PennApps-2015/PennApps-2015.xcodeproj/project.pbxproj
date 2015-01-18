@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		27801FDD1A6A47750052641F /* ClickedFromImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FDB1A6A47750052641F /* ClickedFromImage.png */; };
+		27801FDE1A6A47750052641F /* ClickedRealTime.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FDC1A6A47750052641F /* ClickedRealTime.png */; };
+		27801FE11A6A477C0052641F /* UnclickedFromImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FDF1A6A477C0052641F /* UnclickedFromImage.png */; };
+		27801FE21A6A477C0052641F /* UnclickedRealTime.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FE01A6A477C0052641F /* UnclickedRealTime.png */; };
+		27801FE81A6A4F200052641F /* HomeTransparent.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FE71A6A4F200052641F /* HomeTransparent.png */; };
+		27801FEA1A6A51170052641F /* LaunchScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FE91A6A51170052641F /* LaunchScreen.png */; };
+		27801FF01A6A58DB0052641F /* backButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FEF1A6A58DB0052641F /* backButton.png */; };
+		27801FF21A6A5A050052641F /* RealTimeTextOverlay.png in Resources */ = {isa = PBXBuildFile; fileRef = 27801FF11A6A5A050052641F /* RealTimeTextOverlay.png */; };
+		27801FF51A6A64370052641F /* CustomSignatureView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 27801FF41A6A64370052641F /* CustomSignatureView.mm */; };
+		27801FF81A6AB32A0052641F /* ObjectTrackingClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27801FF71A6AB32A0052641F /* ObjectTrackingClass.cpp */; };
+		27801FFB1A6AB91E0052641F /* cvneon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27801FFA1A6AB91E0052641F /* cvneon.cpp */; };
+		27801FFE1A6AE0EA0052641F /* ArbitraryTracking.mm in Sources */ = {isa = PBXBuildFile; fileRef = 27801FFC1A6AE0EA0052641F /* ArbitraryTracking.mm */; };
+		278020011A6AF2AF0052641F /* Tracker.m in Sources */ = {isa = PBXBuildFile; fileRef = 278020001A6AF2AF0052641F /* Tracker.m */; };
 		27C03CC11A69F4DC0089B106 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 27C03CC01A69F4DC0089B106 /* main.m */; };
 		27C03CC41A69F4DC0089B106 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 27C03CC31A69F4DC0089B106 /* AppDelegate.m */; };
 		27C03CC71A69F4DC0089B106 /* PennApps_2015.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 27C03CC51A69F4DC0089B106 /* PennApps_2015.xcdatamodeld */; };
@@ -42,6 +55,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		27801FDB1A6A47750052641F /* ClickedFromImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClickedFromImage.png; sourceTree = "<group>"; };
+		27801FDC1A6A47750052641F /* ClickedRealTime.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ClickedRealTime.png; sourceTree = "<group>"; };
+		27801FDF1A6A477C0052641F /* UnclickedFromImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnclickedFromImage.png; sourceTree = "<group>"; };
+		27801FE01A6A477C0052641F /* UnclickedRealTime.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = UnclickedRealTime.png; sourceTree = "<group>"; };
+		27801FE71A6A4F200052641F /* HomeTransparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HomeTransparent.png; sourceTree = "<group>"; };
+		27801FE91A6A51170052641F /* LaunchScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LaunchScreen.png; sourceTree = "<group>"; };
+		27801FEF1A6A58DB0052641F /* backButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backButton.png; sourceTree = "<group>"; };
+		27801FF11A6A5A050052641F /* RealTimeTextOverlay.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RealTimeTextOverlay.png; sourceTree = "<group>"; };
+		27801FF31A6A64370052641F /* CustomSignatureView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomSignatureView.h; sourceTree = "<group>"; };
+		27801FF41A6A64370052641F /* CustomSignatureView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CustomSignatureView.mm; sourceTree = "<group>"; };
+		27801FF61A6AB32A0052641F /* ObjectTrackingClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectTrackingClass.h; sourceTree = "<group>"; };
+		27801FF71A6AB32A0052641F /* ObjectTrackingClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectTrackingClass.cpp; sourceTree = "<group>"; };
+		27801FF91A6AB91E0052641F /* cvneon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cvneon.h; sourceTree = "<group>"; };
+		27801FFA1A6AB91E0052641F /* cvneon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cvneon.cpp; sourceTree = "<group>"; };
+		27801FFC1A6AE0EA0052641F /* ArbitraryTracking.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArbitraryTracking.mm; sourceTree = "<group>"; };
+		27801FFD1A6AE0EA0052641F /* ArbitraryTracking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArbitraryTracking.h; sourceTree = "<group>"; };
+		27801FFF1A6AF2AF0052641F /* Tracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tracker.h; sourceTree = "<group>"; };
+		278020001A6AF2AF0052641F /* Tracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tracker.m; sourceTree = "<group>"; };
 		27C03CBB1A69F4DC0089B106 /* PennApps-2015.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PennApps-2015.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		27C03CBF1A69F4DC0089B106 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		27C03CC01A69F4DC0089B106 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -149,12 +180,22 @@
 		27C03CBD1A69F4DC0089B106 /* PennApps-2015 */ = {
 			isa = PBXGroup;
 			children = (
+				27801FFD1A6AE0EA0052641F /* ArbitraryTracking.h */,
+				27801FFC1A6AE0EA0052641F /* ArbitraryTracking.mm */,
+				27801FF91A6AB91E0052641F /* cvneon.h */,
+				27801FFA1A6AB91E0052641F /* cvneon.cpp */,
+				27801FF61A6AB32A0052641F /* ObjectTrackingClass.h */,
+				27801FF71A6AB32A0052641F /* ObjectTrackingClass.cpp */,
+				27801FF31A6A64370052641F /* CustomSignatureView.h */,
+				27801FF41A6A64370052641F /* CustomSignatureView.mm */,
 				27DC24271A6A147700D864B4 /* UIImage+OpenCV.h */,
 				27DC24281A6A147700D864B4 /* UIImage+OpenCV.mm */,
 				27C03CC21A69F4DC0089B106 /* AppDelegate.h */,
 				27C03CC31A69F4DC0089B106 /* AppDelegate.m */,
 				27C03CC81A69F4DC0089B106 /* ViewController.h */,
 				27C03CC91A69F4DC0089B106 /* ViewController.mm */,
+				27801FFF1A6AF2AF0052641F /* Tracker.h */,
+				278020001A6AF2AF0052641F /* Tracker.m */,
 				27C03CCB1A69F4DC0089B106 /* Main.storyboard */,
 				27C03CCE1A69F4DC0089B106 /* Images.xcassets */,
 				27C03CD01A69F4DC0089B106 /* LaunchScreen.xib */,
@@ -167,6 +208,14 @@
 		27C03CBE1A69F4DC0089B106 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				27801FF11A6A5A050052641F /* RealTimeTextOverlay.png */,
+				27801FEF1A6A58DB0052641F /* backButton.png */,
+				27801FE91A6A51170052641F /* LaunchScreen.png */,
+				27801FE71A6A4F200052641F /* HomeTransparent.png */,
+				27801FDF1A6A477C0052641F /* UnclickedFromImage.png */,
+				27801FE01A6A477C0052641F /* UnclickedRealTime.png */,
+				27801FDB1A6A47750052641F /* ClickedFromImage.png */,
+				27801FDC1A6A47750052641F /* ClickedRealTime.png */,
 				27C03CBF1A69F4DC0089B106 /* Info.plist */,
 				27C03CC01A69F4DC0089B106 /* main.m */,
 			);
@@ -295,8 +344,16 @@
 			files = (
 				27DC24241A6A038D00D864B4 /* Default.png in Resources */,
 				27C03CCD1A69F4DC0089B106 /* Main.storyboard in Resources */,
+				27801FEA1A6A51170052641F /* LaunchScreen.png in Resources */,
+				27801FE11A6A477C0052641F /* UnclickedFromImage.png in Resources */,
+				27801FDE1A6A47750052641F /* ClickedRealTime.png in Resources */,
 				D967721C1A6A348A00412792 /* Home.png in Resources */,
+				27801FDD1A6A47750052641F /* ClickedFromImage.png in Resources */,
 				27C03CD21A69F4DC0089B106 /* LaunchScreen.xib in Resources */,
+				27801FF01A6A58DB0052641F /* backButton.png in Resources */,
+				27801FE81A6A4F200052641F /* HomeTransparent.png in Resources */,
+				27801FF21A6A5A050052641F /* RealTimeTextOverlay.png in Resources */,
+				27801FE21A6A477C0052641F /* UnclickedRealTime.png in Resources */,
 				27C03CCF1A69F4DC0089B106 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,12 +405,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27801FF81A6AB32A0052641F /* ObjectTrackingClass.cpp in Sources */,
+				27801FFE1A6AE0EA0052641F /* ArbitraryTracking.mm in Sources */,
 				27DC24221A69FE9100D864B4 /* VideoSource.mm in Sources */,
 				27C03CC41A69F4DC0089B106 /* AppDelegate.m in Sources */,
 				27C03CC71A69F4DC0089B106 /* PennApps_2015.xcdatamodeld in Sources */,
 				27C03CCA1A69F4DC0089B106 /* ViewController.mm in Sources */,
 				27DC24291A6A147700D864B4 /* UIImage+OpenCV.mm in Sources */,
+				278020011A6AF2AF0052641F /* Tracker.m in Sources */,
 				27C03CC11A69F4DC0089B106 /* main.m in Sources */,
+				27801FFB1A6AB91E0052641F /* cvneon.cpp in Sources */,
+				27801FF51A6A64370052641F /* CustomSignatureView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,9 +538,12 @@
 			baseConfigurationReference = 9A8038EAF5AA63F49CCA014B /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "PennApps-2015/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -487,9 +552,12 @@
 			baseConfigurationReference = 298105CA9887D70425902968 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "PennApps-2015/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

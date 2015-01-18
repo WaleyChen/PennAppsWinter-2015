@@ -24,8 +24,8 @@
     self = [super init];
     if ( self ) {
         AVCaptureSession * captureSession = [[AVCaptureSession alloc] init];
-        if ( [captureSession canSetSessionPreset:AVCaptureSessionPreset640x480] ) {
-            [captureSession setSessionPreset:AVCaptureSessionPreset640x480];
+        if ( [captureSession canSetSessionPreset:AVCaptureSessionPresetiFrame960x540] ) {
+            [captureSession setSessionPreset:AVCaptureSessionPresetiFrame960x540];
             NSLog(@"Capturing video at 640x480");
         } else {
             NSLog(@"Could not configure AVCaptureSession video input");
@@ -90,7 +90,6 @@
     // (1) Instantiate a new video data output object
     AVCaptureVideoDataOutput * captureOutput = [[AVCaptureVideoDataOutput alloc] init];
     captureOutput.alwaysDiscardsLateVideoFrames = YES;
-    
     // (2) The sample buffer delegate requires a serial dispatch queue
     dispatch_queue_t queue;
     queue = dispatch_queue_create("com.raywenderlich.tutorials.opencv", DISPATCH_QUEUE_SERIAL);

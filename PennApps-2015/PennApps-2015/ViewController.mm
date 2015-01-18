@@ -15,16 +15,27 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
+#import <opencv2/opencv.hpp>
+#include "cvneon.h"
+#import "ObjectTrackingClass.h"
+#import <QuartzCore/QuartzCore.h>
+#import <CoreGraphics/CoreGraphics.h>
+#include <math.h>
 #define WIDTH	640
 #define HEIGHT	480
 using namespace cv;
-
 @interface ViewController () <VideoSourceDelegate>
 @property (nonatomic, strong) VideoSource * videoSource;
 @end
 
 @implementation ViewController
 @synthesize backgroundImageView;
+@synthesize fromImage;
+@synthesize realTime;
+@synthesize overlay;
+@synthesize topText;
+@synthesize back;
+@synthesize cmt;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -33,14 +44,29 @@ using namespace cv;
     self.videoSource = [[VideoSource alloc] init];
     self.videoSource.delegate = self;
     [self.videoSource startWithDevicePosition:AVCaptureDevicePositionBack];
-    
+    self.navigationController.title = @"The World";
+    blur = true;
+    [topText setAlpha:0];
+    [back setAlpha:0];
+    sigView = [[CustomSignatureView alloc]initWithFrame:CGRectMake(0, 0, 1242, 2208)];
+    sigView.backgroundColor = [UIColor clearColor];
+    trackerView = [[Tracker alloc]initWithFrame:CGRectMake(0, 0, 1, 1)];
+    trackerView.backgroundColor = [UIColor clearColor];
+    sigView.vc = self;
+    [self.backgroundImageView addSubview:sigView];
+    [self.view addSubview:trackerView];
+    shouldBlurTransition = false;
+    shouldProcess = false;
     
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
--(IBAction)uploadFile:(id)sender {
+-(cv::Mat)generateReferenceFrame{
+    return [UIImage toCVMat:self.backgroundImageView.image];
+}
+-(IBAction)uploadFile:(UIImageView *)imageView {
     NSString *urlString = @"http://158.130.175.0/get.php";
     NSString *filename = @"filename";
     request= [[NSMutableURLRequest alloc] init];
@@ -52,20 +78,26 @@ using namespace cv;
     NSMutableData *postbody = [NSMutableData data];
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [postbody appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"fileToUpload\"; filename=\"%@.png\"\r\n", filename] dataUsingEncoding:NSUTF8StringEncoding]];
+    CGRect rect = [self.view bounds];
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [self.view.layer renderInContext:context];
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
     [postbody appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
-    UIImage *image = [UIImage imageNamed:@"Default.png"];
-    [postbody appendData:UIImagePNGRepresentation(image)];
+    [postbody appendData:UIImagePNGRepresentation(img)];
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
     [request setHTTPBody:postbody];
-    NSLog(@"TEST");
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-    NSLog(@"TEST 2");
     NSString *returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
     NSLog(@"%@", returnString);
 }
 -(IBAction)downloadInfo:(id)sender{
-    NSString *string = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://158.130.175.0/test.html"] encoding:NSUTF8StringEncoding error:nil];
-    NSLog(@"%@",string);
+    UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://158.130.175.0/uploads/out.jpg"]]];
+    UIImageView *imgView = [[UIImageView alloc]initWithImage:image];
+    [self.view addSubview:imgView];
+    imgView.center = CGPointMake(500, 100);
+        NSLog(@"%@",image);
     
 }
 #pragma mark -
@@ -198,21 +230,264 @@ using namespace cv;
         // Construct UIImage from CGImageRef
         UIImage * image = [UIImage imageWithCGImage:newImage];
         CGImageRelease(newImage);
-        if (image.size.width != 0) {
-            cv::Mat originalImage = [UIImage toCVMat:image];
-            cv::Mat image_copy;
-            cvtColor(originalImage, image_copy, CV_BGRA2BGR);
-            bitwise_not(image_copy, image_copy);
-            cvtColor(image_copy, originalImage, CV_BGR2BGRA);
-            image = [UIImage fromCVMat:image_copy];
-            image = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationRight];
-            [[_weakSelf backgroundImageView] setImage:image];
+         image = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationRight];
+        [[_weakSelf backgroundImageView] setImage:image];
+        cv::Mat originalImage = [UIImage toCVMat:[[_weakSelf backgroundImageView] image]];
+        cv::Mat img = originalImage;
+        cv::Mat im_gray;
+        cv::cvtColor(img, im_gray, CV_RGB2GRAY);
+        if (shouldProcess) {
+            
+            cmt.processFrame(im_gray);
+            /*for(int i = 0; i<cmt.trackedKeypoints.size(); i++)
+                cv::circle(img, cmt.trackedKeypoints[i].first.pt, 3, cv::Scalar(255,255,255));
+            cv::line(img, cmt.topLeft, cmt.topRight, cv::Scalar(255,255,255));
+            cv::line(img, cmt.topRight, cmt.bottomRight, cv::Scalar(255,255,255));
+            cv::line(img, cmt.bottomRight, cmt.bottomLeft, cv::Scalar(255,255,255));
+            cv::line(img, cmt.bottomLeft, cmt.topLeft, cv::Scalar(255,255,255));*/
+            if (!(isnan(cmt.bottomLeft.x) || isnan(cmt.topLeft.y))) {
+                NSLog(@"PROCESS");
+                [trackerView setNeedsDisplay];
+                [trackerView setFrame:CGRectMake(245 -(cmt.bottomLeft.y)/3.2, 1.5*(cmt.bottomLeft.x+220), cmt.bottomRight.x - cmt.bottomLeft.x, cmt.topLeft.y - cmt.bottomLeft.y)];
+                //[trackerView setFrame:CGRectMake(cmt.bottomLeft.y,cmt.bottomRight.x, cmt.bottomRight.x - cmt.bottomLeft.x, cmt.bottomLeft.y - cmt.topLeft.y)];
+                //[trackerView drawRect:CGRectMake(100, 100, 100, 100)];
+
+            }
         }
+        image = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationRight];
+        [[_weakSelf backgroundImageView] setImage:image];
         
     });
+}
+
+-(IBAction)realTimeTapped:(id)sender{
+    ObjectTrackingClass ot = ObjectTrackingClass();
+    Mat m = [self generateReferenceFrame];
+    Mat n = [UIImage toCVMat:self.backgroundImageView.image];
+    [self getGray:m andOut:n];
+    ot.init(m, n, pointsPrev);
+    [UIView animateWithDuration:0.75f animations:^{
+        [fromImage setAlpha:0.0f];
+        [realTime setAlpha:0.0f];
+        [overlay setAlpha:0.0f];
+    } completion:^(BOOL finished) {
+        blur = false;
+        [UIView animateWithDuration:0.75f animations:^{
+            [topText setAlpha:1.0f];
+            [back setAlpha:1.0f];
+        } completion:nil];
+    }];
+}
+-(IBAction)backButtonTapped:(id)sender{
+    [sigView erase];
+    [trackerView setNeedsDisplay];
+    [trackerView removeFromSuperview];
+    [UIView animateWithDuration:0.5f animations:^{
+        [topText setAlpha:0.0f];
+        [back setAlpha:0.0f];
+        if (shouldBlurTransition) {
+            [backgroundImageView setAlpha:0.0f];
+            shouldBlurTransition = false;
+        }
+    } completion:^(BOOL finished) {
+        [UIView animateWithDuration:0.5f animations:^{
+            blur = true;
+            [fromImage setAlpha:1.0f];
+            [realTime setAlpha:1.0f];
+            [overlay setAlpha:1.0f];
+            if (!self.videoSource.captureSession.isRunning) {
+                [self.videoSource.captureSession startRunning];
+            }
+        } completion:^(BOOL finished){
+            [UIView animateWithDuration:0.25f animations:^{
+               [backgroundImageView setAlpha:1.0f];
+            }];
+        }];
+    }];
+
+    
 }
 -(IBAction)process:(id)sender{
     cv::Mat mat = [backgroundImageView.image toCVMat];
     
+}
+- (void) imagePickerControllerDidCancel: (UIImagePickerController *) picker {
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+    [self backButtonTapped:nil];
+}
+
+// For responding to the user accepting a newly-captured picture or movie
+- (void) imagePickerController: (UIImagePickerController *) picker didFinishPickingMediaWithInfo: (NSDictionary *) info {
+    
+    [self.backgroundImageView setBounds:[[UIScreen mainScreen] bounds]];
+    
+    self.backgroundImageView.image = (UIImage *) [info objectForKey:
+                                   UIImagePickerControllerOriginalImage];
+    self.backgroundImageView.contentMode = UIViewContentModeScaleAspectFit;
+
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+-(IBAction)wiggle:(id)sender{
+    shouldBlurTransition = true;
+    [UIView animateWithDuration:0.75f animations:^{
+        [fromImage setAlpha:0.0f];
+        [realTime setAlpha:0.0f];
+        [overlay setAlpha:0.0f];
+    } completion:^(BOOL finished) {
+        blur = false;
+        [UIView animateWithDuration:0.75f animations:^{
+            [topText setAlpha:1.0f];
+            [back setAlpha:1.0f];
+            [self.videoSource.captureSession stopRunning];
+            if([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypePhotoLibrary]){
+                
+                //we have a camera, therefore we take a picture
+                
+                UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
+                cameraUI.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+                
+                // Hides the controls for moving & scaling pictures, or for
+                // trimming movies. To instead show the controls, use YES.
+                cameraUI.allowsEditing = NO;
+                
+                cameraUI.delegate = self;
+                
+                [self presentViewController:cameraUI animated:YES completion:nil];
+                
+                
+            } else {
+                // alert user that camera is unavailable and to try again if device does actually have a camera
+            }
+
+        } completion:nil];
+    }];
+    
+    
+    
+}
+-(void)getGray:(cv::Mat&) input andOut:(cv::Mat&) gray
+{
+    const int numChannes = input.channels();
+    
+    if (numChannes == 4)
+    {
+#if TARGET_IPHONE_SIMULATOR
+        cv::cvtColor(input, gray, cv::COLOR_BGRA2GRAY);
+#else
+        cv::neon_cvtColorBGRA2GRAY(input, gray);
+#endif
+        
+    }
+    else if (numChannes == 3)
+    {
+        cv::cvtColor(input, gray, cv::COLOR_BGR2GRAY);
+    }
+    else if (numChannes == 1)
+    {
+        gray = input;
+    }
+}
+/*-(void) trackingInitWithOutput:(cv::Mat&) image // output image
+           withInput:(cv::Mat&) image1 // input image
+               withArrayOutput:(std::vector<cv::Point2f>&) points1 // output points array
+{
+    // initialise tracker
+    std::cout << "test \n";
+    cv::TermCriteria termcrit = (cv::TermCriteria::MAX_ITER | cv::TermCriteria::EPS,20.0,0.03);
+
+    cv::goodFeaturesToTrack(image1,
+                            points1,
+                            200,
+                            0.01,
+                            10,
+                            cv::Mat(),
+                            3,
+                            false,
+                            k);
+    
+    // refine corner locations
+    cv::cornerSubPix(image1, points1, cv::Size(10,10), cv::Size(-1,-1), termcrit);
+    
+    size_t i;
+    for( i = 0; i < points1.size(); i++ )
+    {
+        // draw points
+        cv::circle( image, points1[i], 3, cv::Scalar(0,255,0), -1, 8);
+    }
+}*/
+
+-(BOOL)processFrame:(cv::Mat&) inputFrame andOut:(cv::Mat&) outputFrame{
+    // display the frame
+    inputFrame.copyTo(outputFrame);
+    
+    // convert input frame to gray scale
+    [self getGray:inputFrame andOut:imageNext];
+    
+    // prepare the tracking class
+    ObjectTrackingClass ot;
+    ot.setMaxCorners(200);
+    
+    // begin tracking object
+    if ( trackObject ) {
+        ot.track(outputFrame,
+                 imagePrev,
+                 imageNext,
+                 pointsPrev,
+                 pointsNext,
+                 status,
+                 err);
+        
+        // check if the next points array isn't empty
+        if ( pointsNext.empty() )
+            trackObject = false;
+    }
+    
+    // store the reference frame as the object to track
+    if ( computeObject ) {
+        ot.init(outputFrame, imagePrev, pointsNext);
+        trackObject = true;
+        computeObject = false;
+    }
+    
+    // backup previous frame
+    imageNext.copyTo(imagePrev);
+    
+    // backup points array
+    std::swap(pointsNext, pointsPrev);
+    
+    return true;
+}
+-(void) setReferenceFrame:(cv::Mat&) reference
+{
+    [self getGray:reference andOut:imagePrev];
+    computeObject = true;
+}
+
+// Reset object keypoints and descriptors
+-(void) resetReferenceFrame
+{
+    trackObject = false;
+    computeObject = false;
+}
+-(void)initImageProcessingXMax:(float) xMax XMin:(float) xMin YMax:(float) yMax YMin:(float) yMin{
+    [trackerView setNeedsDisplay];
+    [trackerView setFrame:CGRectMake(xMin, yMin, xMax - xMin, yMax - yMin)];
+    [backgroundImageView addSubview:trackerView];
+    [self uploadFile:backgroundImageView];
+    [trackerView removeFromSuperview];
+    [self.view addSubview:trackerView];
+    /*cv::Point2f initTopLeft(xMin,yMin);
+    cv::Point2f initBottomDown(xMax,yMax);
+    UIImage *bg = backgroundImageView.image;
+    cv::Mat img = [UIImage toCVMat:bg];
+    cv::Mat im_gray;
+    cv::cvtColor(img, im_gray, CV_RGB2GRAY);
+    cmt.initialise(im_gray, initTopLeft, initBottomDown);
+    NSLog(@"im_gray: %f %f", [[UIImage fromCVMat:im_gray] size].width,[[UIImage fromCVMat:im_gray] size].height);
+    shouldProcess = false;
+    [sigView erase];
+    NSLog(@"INITIALIZED");*/
+
 }
 @end
