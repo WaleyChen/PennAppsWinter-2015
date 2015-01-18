@@ -36,6 +36,8 @@ using namespace cv;
 @synthesize topText;
 @synthesize back;
 @synthesize cmt;
+@synthesize scrollView;
+@synthesize infoDisplay;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -57,6 +59,13 @@ using namespace cv;
     [self.view addSubview:trackerView];
     shouldBlurTransition = false;
     shouldProcess = false;
+    scrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 400, 350, 200)];
+    scrollView.layer.cornerRadius = 5.0;
+    scrollView.layer.masksToBounds = YES;
+    [scrollView setAlpha:0];
+    sigView.userInteractionEnabled = NO;
+    shouldDownload = false;
+    timer = [[NSTimer alloc]init];
     
 }
 - (void)didReceiveMemoryWarning {
@@ -66,7 +75,7 @@ using namespace cv;
 -(cv::Mat)generateReferenceFrame{
     return [UIImage toCVMat:self.backgroundImageView.image];
 }
--(IBAction)uploadFile:(UIImageView *)imageView {
+-(IBAction)uploadFile:(UIImageView *)imageView sizeOfImage:(CGRect)rectangle {
     NSString *urlString = @"http://158.130.175.0/get.php";
     NSString *filename = @"filename";
     request= [[NSMutableURLRequest alloc] init];
@@ -84,6 +93,11 @@ using namespace cv;
     [self.view.layer renderInContext:context];
     UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    img = [self imageByCropping:img toRect:rectangle];
+    if (img.size.width < 40 || img.size.height < 40) {
+        NSLog(@"Too small");
+        return;
+    }
     [postbody appendData:[@"Content-Type: application/octet-stream\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
     [postbody appendData:UIImagePNGRepresentation(img)];
     [postbody appendData:[[NSString stringWithFormat:@"\r\n--%@--\r\n",boundary] dataUsingEncoding:NSUTF8StringEncoding]];
@@ -91,14 +105,87 @@ using namespace cv;
     NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
     NSString *returnString = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
     NSLog(@"%@", returnString);
+    timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(downloadInfo:) userInfo:nil repeats:YES];
+    shouldDownload = true;
+}
+- (UIImage *)imageByCropping:(UIImage *)imageToCrop toRect:(CGRect)rect {
+    CGImageRef cropped = CGImageCreateWithImageInRect(imageToCrop.CGImage, rect);
+    UIImage *retImage = [UIImage imageWithCGImage: cropped];
+    CGImageRelease(cropped);
+    return retImage;
 }
 -(IBAction)downloadInfo:(id)sender{
+    NSLog(@"Checking");
+    if (!shouldDownload) {
+        return;
+    }
     UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://158.130.175.0/uploads/out.jpg"]]];
-    UIImageView *imgView = [[UIImageView alloc]initWithImage:image];
-    [self.view addSubview:imgView];
-    imgView.center = CGPointMake(500, 100);
-        NSLog(@"%@",image);
+    NSLog(@"%@",image);
+    if (image != NULL) {
+        shouldDownload = false;
+        [timer invalidate];
+        NSLog(@"Done");
+    }
+    image = [self imageByCropping:image toRect:CGRectMake(0, 35, 350, image.size.height)];
     
+    infoDisplay = [[UIImageView alloc]initWithImage:image];
+    infoDisplay.layer.cornerRadius = 5.0;
+    infoDisplay.layer.masksToBounds = YES;
+    [scrollView addSubview:infoDisplay];
+    [scrollView setContentSize:infoDisplay.bounds.size];
+    scrollView.userInteractionEnabled = true;
+    scrollView.scrollEnabled = true;
+    [self.view addSubview:scrollView];
+    scrollView.center = CGPointMake(208, 600);
+    [UIView animateWithDuration:0.75f animations:^{
+        [scrollView setAlpha:0.70f];
+    } completion:^(BOOL finished) {}];
+    /*NSString *xml = [NSString stringWithContentsOfURL:[NSURL URLWithString:@"http://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=xml&titles=SurveyMonkey&rvsection=0%22"] encoding:NSUTF8StringEncoding error:nil];
+    if ([xml containsString:@"company_name"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"company_name"].location];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+    }else if ([xml containsString:@"name"]){
+            xml = [xml substringFromIndex:[xml rangeOfString:@"| name"].location + 2];
+            NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+            NSLog(@"%@", name);
+    }
+    if ([xml containsString:@"company_type"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| company_type"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+        NSLog(@"%@", name);
+    }else if ([xml containsString:@"type"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| type"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 4, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 4)];
+        NSLog(@"%@", name);
+    }
+    if ([xml containsString:@"locations"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| locations"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+        NSLog(@"%@", name);
+    }
+    if ([xml containsString:@"company_slogan"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| company_slogan"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+        NSLog(@"%@", name);
+    }else if ([xml containsString:@"slogan"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| slogan"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+        NSLog(@"%@", name);
+    }
+    if ([xml containsString:@"area_served"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| area_served"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"= "].location + 2, [xml rangeOfString:@"|"].location - [xml rangeOfString:@"= "].location - 2)];
+        NSLog(@"%@", name);
+    }
+    if ([xml containsString:@"homepage"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| homepage"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"URL|"].location + 4, [xml rangeOfString:@"}"].location - [xml rangeOfString:@"URL|"].location - 4)];
+        NSLog(@"%@", name);
+    }else if ([xml containsString:@"url"]){
+        xml = [xml substringFromIndex:[xml rangeOfString:@"| url"].location + 2];
+        NSString *name = [xml substringWithRange:NSMakeRange([xml rangeOfString:@"URL|"].location + 4, [xml rangeOfString:@"}"].location - [xml rangeOfString:@"URL|"].location - 4)];
+        NSLog(@"%@", name);
+    }*/
 }
 #pragma mark -
 #pragma mark VideoSource Delegate
@@ -261,11 +348,8 @@ using namespace cv;
 }
 
 -(IBAction)realTimeTapped:(id)sender{
-    ObjectTrackingClass ot = ObjectTrackingClass();
-    Mat m = [self generateReferenceFrame];
-    Mat n = [UIImage toCVMat:self.backgroundImageView.image];
-    [self getGray:m andOut:n];
-    ot.init(m, n, pointsPrev);
+    sigView.userInteractionEnabled = true;
+    [self downloadInfo:nil];
     [UIView animateWithDuration:0.75f animations:^{
         [fromImage setAlpha:0.0f];
         [realTime setAlpha:0.0f];
@@ -282,9 +366,11 @@ using namespace cv;
     [sigView erase];
     [trackerView setNeedsDisplay];
     [trackerView removeFromSuperview];
+    sigView.userInteractionEnabled = NO;
     [UIView animateWithDuration:0.5f animations:^{
         [topText setAlpha:0.0f];
         [back setAlpha:0.0f];
+        [scrollView setAlpha:0.0f];
         if (shouldBlurTransition) {
             [backgroundImageView setAlpha:0.0f];
             shouldBlurTransition = false;
@@ -329,6 +415,7 @@ using namespace cv;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 -(IBAction)wiggle:(id)sender{
+    sigView.userInteractionEnabled = true;
     shouldBlurTransition = true;
     [UIView animateWithDuration:0.75f animations:^{
         [fromImage setAlpha:0.0f];
@@ -474,9 +561,10 @@ using namespace cv;
     [trackerView setNeedsDisplay];
     [trackerView setFrame:CGRectMake(xMin, yMin, xMax - xMin, yMax - yMin)];
     [backgroundImageView addSubview:trackerView];
-    [self uploadFile:backgroundImageView];
+    [self uploadFile:backgroundImageView sizeOfImage:CGRectMake(xMin, yMin, xMax - xMin, yMax - yMin)];
     [trackerView removeFromSuperview];
-    [self.view addSubview:trackerView];
+    [sigView erase];
+    //[self.view addSubview:trackerView];
     /*cv::Point2f initTopLeft(xMin,yMin);
     cv::Point2f initBottomDown(xMax,yMax);
     UIImage *bg = backgroundImageView.image;

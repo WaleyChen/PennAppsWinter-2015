@@ -124,7 +124,7 @@
                                     <rect key="frame" x="70" y="479" width="275" height="80"/>
                                 </variation>
                                 <connections>
-                                    <action selector="downloadInfo:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="PY0-ku-Zka"/>
+                                    <action selector="wiggle:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="ogb-j1-XuP"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QJN-kJ-9tw">
@@ -155,7 +155,7 @@
                                     <rect key="frame" x="7" y="37" width="60" height="28"/>
                                 </variation>
                                 <connections>
-                                    <action selector="backButtonTapped:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="tqe-sG-uMY"/>
+                                    <action selector="backButtonTapped:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="EKk-fI-Reu"/>
                                 </connections>
                             </button>
                         </subviews>

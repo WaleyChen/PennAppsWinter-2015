@@ -18,7 +18,7 @@
 #import <opencv2/opencv.hpp>
 #import "ArbitraryTracking.h"
 #import "Tracker.h"
-@interface ViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@interface ViewController : UIViewController <UINavigationControllerDelegate,UIImagePickerControllerDelegate, NSXMLParserDelegate>
 {
     NSMutableURLRequest *request;
     BOOL blur;
@@ -36,7 +36,9 @@
     BOOL computeObject;
     BOOL shouldBlurTransition;
     BOOL shouldProcess;
+    BOOL shouldDownload;
     CGRect myRect;
+    NSTimer *timer;
     
 }
 @property (nonatomic, weak) IBOutlet UIImageView * backgroundImageView;
@@ -45,8 +47,10 @@
 @property (nonatomic, weak) IBOutlet UIImageView *overlay;
 @property (nonatomic, weak) IBOutlet UIImageView *topText;
 @property (nonatomic, weak) IBOutlet UIButton *back;
+@property (nonatomic, strong) IBOutlet UIScrollView *scrollView;
+@property (nonatomic, strong) IBOutlet UIImageView *infoDisplay;
 @property ArbitraryTracking cmt;
--(void)uploadFile:(UIImageView *)image;
+-(void)uploadFile:(UIImageView *)image sizeOfImage:(CGRect)rectangle;
 -(IBAction)downloadInfo:(id)sender;
 -(IBAction)process:(id)sender;
 -(void)initImageProcessingXMax:(float) xMax XMin:(float) xMin YMax:(float) yMax YMin:(float) yMin;

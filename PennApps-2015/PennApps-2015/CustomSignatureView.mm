@@ -13,8 +13,8 @@
 #import "ViewController.h"
 static CGPoint midpoint(CGPoint p0, CGPoint p1) {
     return (CGPoint) {
-        (p0.x + p1.x) / 2.0,
-        (p0.y + p1.y) / 2.0
+        static_cast<CGFloat>((p0.x + p1.x) / 2.0),
+        static_cast<CGFloat>((p0.y + p1.y) / 2.0)
     };
 }
 
